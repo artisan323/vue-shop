@@ -4,17 +4,19 @@
       <div class="avater_box">
         <img src="../assets/logo.png" alt="">
       </div>
-      <el-form :model="loginForm" label-width="0px" class="login_form">
-        <el-form-item >
+      <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
+
+        <el-form-item  prop="username">
           <el-input v-model="loginForm.username" prefix-icon="el-icon-search"></el-input>
         </el-form-item>
-        <el-form-item >
+
+        <el-form-item prop="password">
           <el-input type="password" v-model="loginForm.password" prefix-icon="el-icon-search"></el-input>
         </el-form-item>
 
         <div class="btns">
-          <el-button type="primary">登陆</el-button>
-          <el-button type="info">重置</el-button>
+          <el-button type="primary" @click="login">登陆</el-button>
+          <el-button type="info" @click="resetLoginForm">重置</el-button>
         </div>
       </el-form>
     </div>
@@ -28,7 +30,48 @@ export default {
       loginForm: {
         username: 'admin',
         password: '123456'
+      },
+      // 表单验证规则
+      loginFormRules: {
+        username: [
+          { required: true, message: '请输入登陆名称', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符之间', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入登陆密码', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符之间', trigger: 'blur' }
+        ]
       }
+    }
+  },
+  methods: {
+    resetLoginForm () {
+      // console.log(this) 通过 this 对象获取表单示例
+      this.$refs.loginFormRef.resetFields()
+    },
+    login () {
+      this.$refs.loginFormRef.validate(async valid => {
+        console.log(valid)
+        if (!valid) {
+          return
+        }
+        const { data: res } = await this.$http.post('login', this.loginForm)
+        console.log(res)
+        // 消息弹出框
+        if (res.meta.status !== 200) {
+          this.$message.error('登录失败！')
+        } else {
+          this.$message({
+            message: '登陆成功!',
+            type: 'success'
+          })
+          // 保存 token
+          console.log(res.data.token)
+          window.sessionStorage.setItem('token', res.data.token)
+          // 跳转页面
+          this.$router.push('/home')
+        }
+      })
     }
   }
 }
