@@ -5,6 +5,7 @@ import './plugins/element.js'
 import './assets/css/global.css'
 import axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
+import VueQuillEditor from 'vue-quill-editor'
 
 Vue.prototype.$http = axios
 // 配置请求根路径
@@ -16,6 +17,7 @@ axios.interceptors.request.use(config => {
   return config
 })
 Vue.config.productionTip = false
+Vue.use(VueQuillEditor)
 Vue.component('tree-table', TreeTable)
 new Vue({
   router,
