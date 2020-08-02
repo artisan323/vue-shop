@@ -49,7 +49,7 @@ export default {
       // console.log(this) 通过 this 对象获取表单示例
       this.$refs.loginFormRef.resetFields()
     },
-    login () {
+    async login () {
       this.$refs.loginFormRef.validate(async valid => {
         console.log(valid)
         if (!valid) {
